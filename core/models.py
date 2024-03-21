@@ -1,5 +1,8 @@
 from django.db import models
+from rest_framework.exceptions import ValidationError
+
 from shared.models import BaseModel
+from users.models import User
 
 
 class Enter(BaseModel):
@@ -39,16 +42,17 @@ class Order(BaseModel):
             return summ
 
 
+class WorkerProduct(BaseModel):
+    product = models.ForeignKey(Enter, on_delete=models.CASCADE)
+    worker = models.ForeignKey(User, on_delete=models.CASCADE)
+    qty = models.PositiveIntegerField()
 
-
-
-
-
-
-
-
-
-
+    @property
+    def total_price(self):
+        total = 0
+        for enter in self.product.all():
+            total += enter.price * self.qty
+        return total
 
 
 

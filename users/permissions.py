@@ -23,21 +23,21 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect
 
 
-class MyPermissionControl(PermissionRequiredMixin):
-    login_url = '/login'
-    permission_denied_message = (
-        "Bu bo'limga kirish uchun sizda tegishli ruxsat yo'q"
-                                 )
-
-    def handle_no_permission(self) -> HttpResponseRedirect:
-        user = self.request.user
-        if not user.is_authenticated:
-            return redirect('/login')
-        if user.user_roles == 'manager':
-            return redirect('/')
-
-        if user.user_roles == 'admin':
-            return redirect('/')
-
-        if user.user_roles == 'worker':
-            return redirect('core:orders')
+# class MyPermissionControl(PermissionRequiredMixin):
+#     login_url = '/login'
+#     permission_denied_message = (
+#         "Bu bo'limga kirish uchun sizda tegishli ruxsat yo'q"
+#                                  )
+#
+#     def handle_no_permission(self) -> HttpResponseRedirect:
+#         user = self.request.user
+#         if not user.is_authenticated:
+#             return redirect('/login')
+#         if user.user_roles == 'manager':
+#             return redirect('/')
+#
+#         if user.user_roles == 'admin':
+#             return redirect('/')
+#
+#         if user.user_roles == 'worker':
+#             return redirect('core:orders')

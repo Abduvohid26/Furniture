@@ -21,8 +21,17 @@ class User(AbstractUser, BaseModel):
         refresh = RefreshToken.for_user(self)
         return {
             'access_token': str(refresh.access_token),
-            'refresh_token': str(refresh)
+            'refresh_token': str(refresh),
         }
+
+    def check_hash_password(self):
+        if not self.password.startswith('pbkdf2_sha256'):
+            self.set_password(self.password)
+
+    def save(self, *args, **kwargs):
+        self.check_hash_password()
+        super(User, self).save(*args, **kwargs)
+
 
 
 

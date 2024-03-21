@@ -5,18 +5,15 @@ from rest_framework.exceptions import ValidationError
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=128, write_only=True)
-    confirm_password = serializers.CharField(max_length=128, write_only=True)
 
     class Meta:
         model = User
         fields = (
             'id',
             'username',
-            'first_name',
-            'last_name',
             'user_roles',
             'password',
-            'confirm_password'
+
         )
 
     def create(self, validated_data):
@@ -27,22 +24,17 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         username = data.get('username')
-        password = data.get('password')
-        confirm_password = data.pop('confirm_password', None)
 
         if username and User.objects.filter(username=username).exists():
             raise ValidationError({'username': 'Username already exists'})
 
-        if password != confirm_password:
-            raise ValidationError({'confirm_password': 'Passwords do not match'})
-
         return data
 
-    def to_representation(self, instance):
-        print('to_rep', instance)
-        data = super(RegisterSerializer, self).to_representation(instance)
-        data.update(instance.token())
-        return data
+    # def to_representation(self, instance):
+    #     data = super(RegisterSerializer, self).to_representation(instance)
+    #     tokens = instance.token()
+    #     data.update(tokens)
+    #     return data
 
 
 class LoginSerializer(serializers.ModelSerializer):
@@ -63,5 +55,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'password', 'user_roles', 'created_at')
+
 
 

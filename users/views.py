@@ -1,5 +1,4 @@
-from django.contrib.auth import authenticate
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import authenticate, logout
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,10 +8,10 @@ from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
 from .models import User
 
 
-class RegisterView(LoginRequiredMixin, generics.CreateAPIView):
+class SignUpView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     queryset = User.objects.all()
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.AllowAny]
 
 
 class LoginApiView(generics.CreateAPIView):
@@ -27,8 +26,10 @@ class LoginApiView(generics.CreateAPIView):
             return Response(
                 {
                     'id': user.id,
+                    'access_token': user.token()['access_token'],
+                    'refresh_token': user.token()['refresh_token'],
                     'username': user.username,
-                    'roles': user.user_roles
+                    'roles': user.user_roles,
                 }, status=status.HTTP_200_OK
             )
         else:
@@ -76,5 +77,11 @@ class UsersDetailView(APIView):
                 data={
                     'success': True,
                     'message': 'User successfully deleted'
-                }
+                }, status=status.HTTP_200_OK
             )
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        logout(request)
+        return Response({'message': "Logout successful"}, status=status.HTTP_200_OK)
