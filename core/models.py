@@ -55,8 +55,10 @@ class WorkerProduct(BaseModel):
         return total
 
 
+class Order_to_Send(BaseModel):
+    worker = models.ForeignKey(User, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    text = models.TextField()
 
-
-
-
-
+    def __str__(self):
+        return f'{self.worker} and {self.order}'

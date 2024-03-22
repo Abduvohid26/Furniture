@@ -2,8 +2,8 @@ from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import ProductSerializer, OrderSerializer, WorkerProductSerializer
-from core.models import Enter, Order, WorkerProduct
+from .serializers import ProductSerializer, OrderSerializer, WorkerProductSerializer, Order_to_SendSerializer
+from core.models import Enter, Order, WorkerProduct, Order_to_Send
 
 
 class Product(APIView):
@@ -115,8 +115,47 @@ class WorkerProductDetailAPIView(APIView):
         try:
             order = get_object_or_404(WorkerProduct, id=id)
         except:
-            return Response(data={'error': 'Order Not Fount'})
+            return Response(data={'error': 'Worker_Product Not Fount'})
 
         else:
             order.delete()
-            return Response(data={'success': 'Order successfully deleted'})
+            return Response(data={'success': 'Worker_Product successfully deleted'})
+
+
+class Order_to_SendAPIView(APIView):
+    def get(self, request):
+        order = Order_to_Send.objects.all()
+        serializer = Order_to_SendSerializer(order, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = Order_to_SendSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Order_to_SendDetailAPIView(APIView):
+    def get(self, request, id):
+        order = get_object_or_404(Order_to_Send, id=id)
+        serializer = Order_to_SendSerializer(order)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, id):
+        order = get_object_or_404(Order_to_Send, id=id)
+        serializer = Order_to_SendSerializer(instance=order, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        try:
+            order = get_object_or_404(Order_to_Send, id=id)
+        except:
+            return Response(data={'error': 'Order_to_Send Not Fount'})
+
+        else:
+            order.delete()
+            return Response(data={'success': 'Order_to_Send successfully deleted'})

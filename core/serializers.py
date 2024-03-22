@@ -1,4 +1,4 @@
-from .models import Enter, Order, WorkerProduct
+from .models import Enter, Order, WorkerProduct, Order_to_Send
 from rest_framework import serializers
 
 
@@ -23,4 +23,12 @@ class WorkerProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WorkerProduct
-        fields = ('id', 'worker', 'product', 'qty', 'total', 'created_at')
+        fields = ('id', 'worker', 'product', 'qty', 'total_price', 'created_at')
+
+
+class Order_to_SendSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(read_only=True)
+
+    class Meta:
+        model = Order_to_Send
+        fields = ('id', 'worker', 'order', 'text', 'created_at')
