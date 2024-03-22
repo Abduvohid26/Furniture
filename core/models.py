@@ -62,3 +62,4 @@ class Order_to_Send(BaseModel):
 
     def __str__(self):
         return f'{self.worker} and {self.order}'
+
